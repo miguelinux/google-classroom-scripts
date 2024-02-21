@@ -14,23 +14,53 @@ from googleapiclient.errors import HttpError
 
 from scopes import SCOPES
 
-def classroom_list():
+def conectar():
+    """ Conectar con Google
+    """
+    creds = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists("token.json"):
+        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+          creds.refresh(Request())
+        else:
+          flow = InstalledAppFlow.from_client_secrets_file(
+              "credentials.json", SCOPES
+          )
+          creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open("token.json", "w") as token:
+          token.write(creds.to_json())
+    return creds
+
+
+def classroom_list(creds):
     """ Lista las clases que tienes
     """
-    credenciales = None
+    try:
+        service = build("classroom", "v1", credentials=creds)
 
-    if os.path.exists('token.json'):
-        credenciales = Credentials.from_authorized_user_file('token.json', SCOPES)
-    if not credenciales or not credenciales.valid:
-        if credenciales and credenciales.expired and credenciales.refresh_token:
-            credenciales.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            credenciales = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(credenciales.to_json())
+        # Call the Classroom API
+        results = service.courses().list(pageSize=10).execute()
+        courses = results.get("courses", [])
+
+        if not courses:
+          print("No courses found.")
+          return
+        # Prints the names of the first 10 courses.
+        print("Courses:")
+        for course in courses:
+          print(course["name"])
+
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+
 
 if __name__ == '__main__':
-    classroom_list()
+    c = conectar()
+    if c:
+        classroom_list(c)
