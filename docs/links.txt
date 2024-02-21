@@ -1,4 +1,8 @@
 # Core library
 https://googleapis.github.io/google-api-python-client/docs/epy/index.html
+
 # API library
 https://googleapis.github.io/google-api-python-client/docs/dyn/classroom_v1.html
+
+# Google snippets
+https://github.com/googleworkspace/python-samples/tree/main/classroom/snippets
