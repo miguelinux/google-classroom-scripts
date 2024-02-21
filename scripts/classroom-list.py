@@ -24,7 +24,8 @@ def classroom_list(creds):
         # Prints the names of the first 10 courses.
         print("Courses:")
         for course in courses:
-            print(course["name"])
+            if course["courseState"] == "ACTIVE":
+                print(course["id"], ":", "{:>50s}".format(course["name"]))
 
     except HttpError as error:
         print(f"An error occurred: {error}")
