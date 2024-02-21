@@ -4,15 +4,13 @@
 # :indentSize=4:tabSize=8:noTabs=true:
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
 from googleconn import conectar
 
+
 def classroom_list(creds):
-    """ Lista las clases que tienes
-    """
+    """Lista las clases que tienes"""
     try:
         service = build("classroom", "v1", credentials=creds)
 
@@ -21,18 +19,18 @@ def classroom_list(creds):
         courses = results.get("courses", [])
 
         if not courses:
-          print("No courses found.")
-          return
+            print("No courses found.")
+            return
         # Prints the names of the first 10 courses.
         print("Courses:")
         for course in courses:
-          print(course["name"])
+            print(course["name"])
 
     except HttpError as error:
         print(f"An error occurred: {error}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     c = conectar()
     if c:
         classroom_list(c)
